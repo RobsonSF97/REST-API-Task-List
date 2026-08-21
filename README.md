@@ -22,6 +22,7 @@ A REST API where you can add, search, update and delete your tasks
 
 
 ## 👨‍💻 RELEASES
+| 0.2.1 | 2026-08-21 | - Logic improvements and bug fixes |
 | 0.2.0 | 2026-08-20 | - Added all API requests to TaskController, including validations and HTTP status responses.
 - Created TaskMapper to handle the conversion between DTOs and entities, and vice versa.
 - Created DTOs to handle request and response data.

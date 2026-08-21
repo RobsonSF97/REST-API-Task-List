@@ -20,7 +20,7 @@ import com.estudos.lista_estudos.service.TaskService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping("/tasks")
 public class TaskController {
 	
 	private final TaskService taskService;
@@ -30,14 +30,14 @@ public class TaskController {
 	}
 	
 
-	@PostMapping("/create")
+	@PostMapping
 	public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody TaskRequestDTO taskRequest) {
 		TaskResponseDTO response = taskService.createTask(taskRequest);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
-	@GetMapping("/search")
+	@GetMapping
 	public ResponseEntity<List<TaskResponseDTO>> listAll(){
 		List <TaskResponseDTO> response = taskService.findAllTasks();
 		
@@ -45,7 +45,7 @@ public class TaskController {
 		
 	}
 	
-	@GetMapping("/search/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<TaskResponseDTO> findById(@PathVariable("id") Long id){
 		TaskResponseDTO response = taskService.findTaskById(id);
 		
@@ -53,22 +53,22 @@ public class TaskController {
 		
 	}
 	
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<Object> deleteTaskById(@PathVariable("id") Long id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteTaskById(@PathVariable("id") Long id) {
 		taskService.deleteTaskById(id);
 		
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body("The task was successfully deleted");
+		return ResponseEntity.noContent().build();
 	}
 	
-	@PatchMapping("/complete/{id}")
+	@PatchMapping("/tasks/complete/{id}")
 	public ResponseEntity<TaskResponseDTO> completeTask(@PathVariable("id") Long id) {
 		TaskResponseDTO response =  taskService.completeTask(id);
 		
 		return ResponseEntity.ok(response);
 	}
 	
-	@PatchMapping("/update/{id}")
-	public ResponseEntity<Object> updateTask(@PathVariable("id") Long id, @Valid @RequestBody TaskRequestDTO taskRequest){
+	@PatchMapping("/{id}")
+	public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable("id") Long id, @Valid @RequestBody TaskRequestDTO taskRequest){
 		TaskResponseDTO response = taskService.updateTask(id, taskRequest);
 		
 		return ResponseEntity.ok(response);

@@ -12,7 +12,6 @@ import com.estudos.lista_estudos.dto.TaskResponseDTO;
 import com.estudos.lista_estudos.dto.mapper.TaskMapper;
 import com.estudos.lista_estudos.entity.TaskEntity;
 import com.estudos.lista_estudos.exception.DuplicateTitleException;
-import com.estudos.lista_estudos.exception.EmptyListException;
 import com.estudos.lista_estudos.exception.EmptyTitleException;
 import com.estudos.lista_estudos.exception.TaskNotFoundException;
 import com.estudos.lista_estudos.repository.TaskRepository;
@@ -32,12 +31,11 @@ public class TaskService {
 	public List<TaskResponseDTO> findAllTasks() {
 		List<TaskEntity> listEntity = taskRepository.findAll();
 		List<TaskResponseDTO> response = new ArrayList<>();
-		if (listEntity == null || listEntity.isEmpty()) {
-			throw new EmptyListException();
-		}
-		for (TaskEntity item : listEntity) {
-			TaskResponseDTO dto = taskMapper.entityToDTO(item);
-			response.add(dto);
+		if (!(listEntity == null) && !listEntity.isEmpty()) {
+			for (TaskEntity item : listEntity) {
+				TaskResponseDTO dto = taskMapper.entityToDTO(item);
+				response.add(dto);
+			}
 		}
 		return response;
 	}
@@ -75,17 +73,21 @@ public class TaskService {
 	@Transactional
 	public TaskResponseDTO updateTask(Long id, TaskRequestDTO request) {
 		TaskEntity taskEntity = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-		
-		if(!(request.getDescription() == null || request.getDescription().isBlank())) {
-		taskEntity.setDescription(request.getDescription());
+
+		if (!(request.getDescription() == null || request.getDescription().isBlank())) {
+			taskEntity.setDescription(request.getDescription());
 		}
-		
-		if(!(request.getTitle() == null || request.getTitle().isBlank())) {
-			taskEntity.setTitle(request.getTitle());
+
+		if (!(request.getTitle() == null || request.getTitle().isBlank())) {
+			if (taskRepository.existsByTitleIgnoreCase(request.getTitle())
+					&& !taskEntity.getTitle().equalsIgnoreCase(request.getTitle())) {
+				throw new DuplicateTitleException(request.getTitle());
+			}
+			taskEntity.setTitle(request.getTitle().toUpperCase());
 		}
 		taskRepository.save(taskEntity);
 		return taskMapper.entityToDTO(taskEntity);
-		
+
 	}
 	
 	

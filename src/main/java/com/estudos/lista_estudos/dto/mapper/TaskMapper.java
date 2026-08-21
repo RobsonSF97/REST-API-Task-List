@@ -11,7 +11,7 @@ public class TaskMapper {
 	
 	public TaskEntity dtoToEntity(TaskRequestDTO dto) {
 		TaskEntity entity = new TaskEntity();
-		entity.setTitle(dto.getTitle());
+		entity.setTitle(dto.getTitle().toUpperCase());
 		entity.setDescription(dto.getDescription());
 		
 		return entity;
